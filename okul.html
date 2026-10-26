@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Okul Sistemi · Python Okulu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="ust-menu">
+    <div class="menu-ic">
+      <a href="index.html" class="logo">🐍 Python Okulu</a>
+      <button class="menu-butonu" aria-label="Menüyü aç" aria-expanded="false">☰</button>
+      <nav class="menu-linkleri">
+        <a href="index.html">🏠 Ana Sayfa</a>
+        <a href="dersler.html">📚 Dersler</a>
+        <a href="sinif.html">🏫 Sınıf</a>
+        <a href="okul.html" class="aktif">🎒 Okulum</a>
+        <a href="canli-ders.html">🎥 Canlı Ders</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="icerik">
+
+    <!-- ============ YÜKLENİYOR ============ -->
+    <section id="yukleniyor" class="kart orta">
+      <div class="buyuk-emoji">⏳</div>
+      <p>Okul sistemi açılıyor...</p>
+    </section>
+
+    <!-- ============ GİRİŞ / KAYIT ============ -->
+    <div id="girisEkrani" hidden>
+      <section class="sayfa-basligi">
+        <h1>🏫 Okul Sistemi</h1>
+        <p>Okul aç, sınıf aç, arkadaşlarınla birlikte öğren! 🚀</p>
+      </section>
+
+      <section class="kart giris-kart">
+        <div class="sekmeler" role="tablist">
+          <button class="sekme aktif" data-sekme="giris" role="tab">🔑 Giriş yap</button>
+          <button class="sekme" data-sekme="kayit" role="tab">✨ Kayıt ol</button>
+        </div>
+
+        <form id="girisFormu" class="okul-form">
+          <label class="etiketli">Kullanıcı adı
+            <input id="girisKullanici" class="cevap-kutusu tam" autocomplete="username" required>
+          </label>
+          <label class="etiketli">Şifre
+            <input id="girisSifre" class="cevap-kutusu tam" type="password" autocomplete="current-password" required>
+          </label>
+          <button class="buton buton-kirmizi tam-genislik" type="submit">🔑 Giriş yap</button>
+        </form>
+
+        <form id="kayitFormu" class="okul-form" hidden>
+          <fieldset class="rol-secimi">
+            <legend>Sen kimsin?</legend>
+            <label class="rol-karti"><input type="radio" name="rol" value="ogrenci" checked>
+              <span class="rol-emoji">👦</span><b>Öğrenci</b><span class="soluk kucuk">Sınıfa katılır, yıldız toplar</span></label>
+            <label class="rol-karti"><input type="radio" name="rol" value="ogretmen">
+              <span class="rol-emoji">🧑‍🏫</span><b>Öğretmen</b><span class="soluk kucuk">Okula katılır, sınıf açar</span></label>
+            <label class="rol-karti"><input type="radio" name="rol" value="mudur">
+              <span class="rol-emoji">🎩</span><b>Okul Müdürü</b><span class="soluk kucuk">Okul açar, öğretmenleri yönetir</span></label>
+          </fieldset>
+          <label class="etiketli">İlk adın <span class="soluk kucuk">(soyad yazma!)</span>
+            <input id="kayitAd" class="cevap-kutusu tam" maxlength="20" required>
+          </label>
+          <label class="etiketli">Kullanıcı adı <span class="soluk kucuk">(küçük harf, rakam ve _ · 3-15 harf)</span>
+            <input id="kayitKullanici" class="cevap-kutusu tam" maxlength="15" autocomplete="username" required>
+          </label>
+          <label class="etiketli">Şifre <span class="soluk kucuk">(en az 6 harf)</span>
+            <input id="kayitSifre" class="cevap-kutusu tam" type="password" autocomplete="new-password" required>
+          </label>
+          <label class="etiketli">Şifre tekrar
+            <input id="kayitSifre2" class="cevap-kutusu tam" type="password" autocomplete="new-password" required>
+          </label>
+          <button class="buton buton-kirmizi tam-genislik" type="submit">✨ Kayıt ol</button>
+          <p class="soluk kucuk">🔒 Şifreni kimseyle paylaşma. Annen ya da baban bilsin, yeter!</p>
+        </form>
+
+        <div class="veya"><span>veya</span></div>
+        <button id="googleButonu" class="buton google-buton tam-genislik" type="button">
+          <svg viewBox="0 0 48 48" width="22" height="22" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>
+          Google ile giriş yap
+        </button>
+
+        <p class="sonuc" id="girisSonuc" role="status"></p>
+      </section>
+    </div>
+
+    <!-- ============ ROL SEÇ (eski hesaplar için, bir kere) ============ -->
+    <section id="rolEkrani" class="kart giris-kart" hidden>
+      <h2 id="rolBaslik">🎭 Rolünü seç</h2>
+      <p class="soluk" id="rolAciklama">Okul sisteminde artık roller var. Bir kere seçersin, sonra değişmez!</p>
+      <form id="rolFormu" class="okul-form">
+        <label class="etiketli" id="profilAdAlani" hidden>İlk adın <span class="soluk kucuk">(soyad yazma!)</span>
+          <input id="profilAd" class="cevap-kutusu tam" maxlength="20">
+        </label>
+        <fieldset class="rol-secimi">
+          <legend>Sen kimsin?</legend>
+          <label class="rol-karti"><input type="radio" name="rol2" value="ogrenci" checked>
+            <span class="rol-emoji">👦</span><b>Öğrenci</b><span class="soluk kucuk">Sınıfa katılır, yıldız toplar</span></label>
+          <label class="rol-karti"><input type="radio" name="rol2" value="ogretmen">
+            <span class="rol-emoji">🧑‍🏫</span><b>Öğretmen</b><span class="soluk kucuk">Okula katılır, sınıf açar</span></label>
+          <label class="rol-karti"><input type="radio" name="rol2" value="mudur">
+            <span class="rol-emoji">🎩</span><b>Okul Müdürü</b><span class="soluk kucuk">Okul açar, öğretmenleri yönetir</span></label>
+        </fieldset>
+        <button class="buton buton-kirmizi tam-genislik" type="submit">✅ Tamam</button>
+      </form>
+      <p class="sonuc" id="rolSonuc" role="status"></p>
+      <button id="rolCikis" class="buton buton-soluk kucuk-buton" type="button">🚪 Vazgeç ve çıkış yap</button>
+    </section>
+
+    <!-- ============ ANA PANEL ============ -->
+    <div id="anaPanel" hidden>
+      <section class="sayfa-basligi kullanici-baslik">
+        <div>
+          <h1>👋 Merhaba <span id="kullaniciAdi"></span>!</h1>
+          <p class="soluk">@<span id="kullaniciKimlik"></span> · <span class="rol-rozet" id="rolRozeti"></span></p>
+        </div>
+        <button id="cikisButonu" class="buton buton-soluk kucuk-buton">🚪 Çıkış</button>
+      </section>
+
+      <div class="iki-sutun">
+        <section class="kart" id="sinifKartim" hidden>
+          <h2>📚 Sınıflarım</h2>
+          <div id="sinifListem" class="panel-liste"></div>
+          <form id="katilFormu" class="cevap-satiri ekle-satiri">
+            <input id="katilKodu" class="cevap-kutusu kod-girisi" maxlength="6" placeholder="Sınıf kodu" aria-label="Sınıf kodu" required>
+            <button class="buton buton-kirmizi" type="submit">➕ Katıl</button>
+          </form>
+          <p class="sonuc" id="katilSonuc" role="status"></p>
+        </section>
+
+        <section class="kart" id="okulKartim" hidden>
+          <h2>🏫 Okullarım</h2>
+          <div id="okulListem" class="panel-liste"></div>
+          <!-- Müdür: okul açar -->
+          <form id="okulFormu" class="cevap-satiri ekle-satiri" hidden>
+            <input id="okulAdi" class="cevap-kutusu" maxlength="40" placeholder="Yeni okulun adı" aria-label="Okul adı" required>
+            <button class="buton buton-kirmizi" type="submit">🏫 Aç</button>
+          </form>
+          <!-- Öğretmen: okul koduyla okula katılır -->
+          <form id="okulaKatilFormu" class="cevap-satiri ekle-satiri" hidden>
+            <input id="okulKoduGiris" class="cevap-kutusu kod-girisi" maxlength="6" placeholder="Okul kodu" aria-label="Okul kodu" required>
+            <button class="buton buton-kirmizi" type="submit">➕ Katıl</button>
+          </form>
+          <p class="soluk kucuk" id="okulIpucu"></p>
+          <p class="sonuc" id="okulSonuc" role="status"></p>
+        </section>
+      </div>
+    </div>
+
+    <!-- ============ OKUL ============ -->
+    <div id="okulGorunumu" hidden>
+      <a href="#" class="ekmek">← Ana panel</a>
+      <section class="sayfa-basligi">
+        <h1>🏫 <span id="okulBaslik"></span></h1>
+        <p class="soluk" id="okulAltBaslik"></p>
+      </section>
+
+      <!-- Müdür görür -->
+      <section class="kart kod-karti" id="okulKodKarti" hidden>
+        <div class="sinif-kodu">
+          <span class="etiket">Öğretmen kodu · öğretmenlerine bunu söyle</span>
+          <span class="kod" id="okulKodu"></span>
+        </div>
+        <button id="okulKoduKopyala" class="buton buton-beyaz kucuk-buton">📋 Kopyala</button>
+      </section>
+
+      <section class="kart" id="ogretmenlerKarti" hidden>
+        <h2>🧑‍🏫 Öğretmenler</h2>
+        <div id="ogretmenListesi" class="panel-liste"></div>
+      </section>
+
+      <section class="kart" id="okulSiniflarKarti">
+        <h2 id="okulSinifBaslik">📚 Sınıflar</h2>
+        <div id="okulSiniflari" class="panel-liste"></div>
+        <form id="sinifFormu" class="cevap-satiri ekle-satiri">
+          <input id="sinifAdi" class="cevap-kutusu" maxlength="40" placeholder="Yeni sınıfın adı (örnek: Python 1)" aria-label="Sınıf adı" required>
+          <button class="buton buton-kirmizi" type="submit">➕ Sınıf aç</button>
+        </form>
+        <p class="sonuc" id="sinifSonuc" role="status"></p>
+      </section>
+
+      <section class="kart sohbet-karti" id="okulSohbetKarti" hidden>
+        <h2>💬 Okul sohbeti</h2>
+        <p class="soluk kucuk">Bu okulun müdürü, öğretmenleri ve öğrencileri görür. Kibar ol! 😊 Küfür ve telefon numarası engellenir.</p>
+        <div class="sohbet" id="okulSohbet" aria-live="polite"></div>
+        <form class="sohbet-formu" data-sohbet="okul">
+          <input class="cevap-kutusu" maxlength="300" placeholder="Okula bir mesaj yaz..." aria-label="Okul sohbetine mesaj" required>
+          <button class="buton buton-kirmizi" type="submit" aria-label="Gönder">➤</button>
+        </form>
+        <p class="sonuc" id="okulSohbetSonuc" role="status"></p>
+      </section>
+    </div>
+
+    <!-- ============ SINIF ============ -->
+    <div id="sinifGorunumu" hidden>
+      <a href="#" class="ekmek">← Ana panel</a>
+      <section class="sayfa-basligi">
+        <h1>📚 <span id="sinifBaslik"></span></h1>
+        <p class="soluk">🏫 <span id="sinifOkul"></span> · 🧑‍🏫 Öğretmen: <b id="sinifOgretmen"></b></p>
+      </section>
+
+      <p class="kart mudur-notu" id="mudurNotu" hidden>🎩 Müdür olarak bu sınıfı <b>izliyorsun</b>. Yıldız ve ödevleri sınıfın öğretmeni verir.</p>
+
+      <!-- Öğretmen görür -->
+      <section class="kart kod-karti" id="kodKarti" hidden>
+        <div class="sinif-kodu">
+          <span class="etiket">Sınıf kodu · öğrencilerine bunu söyle</span>
+          <span class="kod" id="sinifKodu"></span>
+        </div>
+        <button id="koduKopyala" class="buton buton-beyaz kucuk-buton">📋 Kopyala</button>
+      </section>
+
+      <!-- Öğrenci görür -->
+      <section class="kart benim-kart" id="benimKart" hidden>
+        <div class="istatistikler">
+          <div class="istatistik"><span class="istatistik-etiket">Yıldızın</span><span class="istatistik-deger" id="benimYildiz">0 ⭐</span></div>
+          <div class="istatistik"><span class="istatistik-etiket">Sıran</span><span class="istatistik-deger" id="benimSira">-</span></div>
+          <div class="istatistik"><span class="istatistik-etiket">Katıldığın ders</span><span class="istatistik-deger" id="benimYoklama">0</span></div>
+        </div>
+      </section>
+
+      <section class="kart">
+        <h2 id="uyeBaslik">🏆 Sıralama</h2>
+        <div id="uyeListesi" class="panel-liste"></div>
+      </section>
+
+      <section class="kart" id="yoklamaKarti" hidden>
+        <h2>✅ Yoklama</h2>
+        <label class="etiketli">Hangi gün?
+          <input id="yoklamaTarihi" class="cevap-kutusu tam" type="date">
+        </label>
+        <div id="yoklamaListesi" class="panel-liste"></div>
+      </section>
+
+      <div class="iki-sutun">
+        <section class="kart">
+          <h2>📢 Duyurular</h2>
+          <form id="duyuruFormu" class="ogretmen-alani" hidden>
+            <textarea id="yeniDuyuru" class="yazi-alani" rows="3" maxlength="500" placeholder="Yeni duyuru yaz..." required></textarea>
+            <button class="buton buton-kirmizi tam-genislik" type="submit">📢 Duyur</button>
+          </form>
+          <div id="duyuruListesi"></div>
+        </section>
+
+        <section class="kart">
+          <h2>📝 Ödevler</h2>
+          <form id="odevFormu" class="ogretmen-alani" hidden>
+            <input id="odevBaslik" class="cevap-kutusu tam" maxlength="80" placeholder="Ödevin başlığı" aria-label="Ödev başlığı" required>
+            <textarea id="odevAciklama" class="yazi-alani" rows="3" maxlength="500" placeholder="Ödevde ne yapılacak?"></textarea>
+            <label class="etiketli">Son teslim tarihi
+              <input id="odevTarih" class="cevap-kutusu tam" type="date" required>
+            </label>
+            <button class="buton buton-kirmizi tam-genislik" type="submit">📝 Ödev ver</button>
+          </form>
+          <div id="odevListesi"></div>
+        </section>
+      </div>
+
+      <section class="kart sohbet-karti">
+        <div class="sohbet-ust">
+          <h2>💬 Sınıf sohbeti</h2>
+          <a id="okulSohbetLinki" class="buton buton-beyaz kucuk-buton" hidden>🏫 Okul sohbeti →</a>
+        </div>
+        <p class="soluk kucuk">Sadece bu sınıftakiler görür. Kibar ol! 😊 Küfür ve telefon numarası engellenir.</p>
+        <div class="sohbet" id="sinifSohbet" aria-live="polite"></div>
+        <form class="sohbet-formu" data-sohbet="sinif">
+          <input class="cevap-kutusu" maxlength="300" placeholder="Sınıfa bir mesaj yaz..." aria-label="Sınıf sohbetine mesaj" required>
+          <button class="buton buton-kirmizi" type="submit" aria-label="Gönder">➤</button>
+        </form>
+        <p class="sonuc" id="sinifSohbetSonuc" role="status"></p>
+      </section>
+
+      <div class="sifirla-alani">
+        <button id="siniftanCik" class="buton buton-soluk" hidden>🚪 Bu sınıftan çık</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="alt-bilgi">
+    🐍 Python Okulu · Okul Sistemi · Mustafa ve arkadaşlarının fikirleriyle ❤️
+  </footer>
+
+  <script type="module" src="okul.js"></script>
+</body>
+</html>

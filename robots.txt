@@ -1,0 +1,3 @@
+# Arama motorları bu sitenin hiçbir sayfasını taramasın
+User-agent: *
+Disallow: /

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google ve diğer arama motorları bu siteyi listelemesin -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dersler · Python Okulu</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 🔒 Giriş kapısı: giriş yapmayan okul.html'e gider (bilgisayardaki dosyadan açınca çalışmaz) -->
+  <script>
+    if (location.protocol !== "file:") {
+      document.documentElement.classList.add("giris-bekleniyor");
+      setTimeout(function () {
+        if (!document.documentElement.classList.contains("giris-bekleniyor")) return;
+        document.documentElement.classList.remove("giris-bekleniyor");
+        document.body.innerHTML = '<p style="text-align:center;padding:48px 16px;font-size:20px">📶 Giriş kontrol edilemedi. İnternetini kontrol edip sayfayı yenile.</p>';
+      }, 12000);
+    }
+  </script>
+  <script type="module" src="giris-kontrol.js"></script>
+</head>
+<body>
+
+  <!-- Üst menü -->
+  <header class="ust-menu">
+    <div class="menu-ic">
+      <a href="index.html" class="logo">🐍 Python Okulu</a>
+      <button class="menu-butonu" aria-label="Menüyü aç" aria-expanded="false">☰</button>
+      <nav class="menu-linkleri">
+        <a href="index.html">🏠 Ana Sayfa</a>
+        <a href="dersler.html" class="aktif">📚 Dersler</a>
+        <a href="sinif.html">🏫 Sınıf</a>
+        <a href="okul.html">🎒 Okulum</a>
+        <a href="canli-ders.html">🎥 Canlı Ders</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="icerik">
+
+    <!-- ============ BÜTÜN DERSLER (KATALOG) ============ -->
+    <div id="katalog">
+
+      <section class="sayfa-basligi">
+        <h1>📚 Dersler</h1>
+        <p><span data-bolum-sayisi>9</span> bölüm, <span data-toplam-ders>29</span> ders. Sıfırdan Python ustalığına! 🚀</p>
+      </section>
+
+      <!-- İstatistikler -->
+      <section class="kart istatistik-karti">
+        <div class="istatistikler">
+          <div class="istatistik">
+            <span class="istatistik-etiket">Seviyen</span>
+            <span class="istatistik-deger" data-seviye>🥚 Yumurta</span>
+          </div>
+          <div class="istatistik">
+            <span class="istatistik-etiket">Puanın</span>
+            <span class="istatistik-deger" data-xp>0 XP</span>
+          </div>
+          <div class="istatistik">
+            <span class="istatistik-etiket">Biten</span>
+            <span class="istatistik-deger" data-ders-sayaci>0 / 29 ders</span>
+          </div>
+        </div>
+        <div class="ilerleme-cubuk"><div class="ilerleme-dolu" data-genel></div></div>
+        <p class="soluk kucuk" data-sonraki-seviye></p>
+        <a href="#" id="devamButonu" class="buton buton-kirmizi tam-genislik">🚀 Başla</a>
+        <a href="#tekrar" id="tekrarButonu" class="buton buton-beyaz tam-genislik" hidden>🔁 Hızlı Tekrar · bitirdiğin derslerden 5 soru</a>
+      </section>
+
+      <!-- Arama -->
+      <div class="arama">
+        <span aria-hidden="true">🔍</span>
+        <input id="aramaKutusu" type="search" placeholder="Ders ara... (örnek: döngü, liste, if)" aria-label="Ders ara">
+      </div>
+      <p id="aramaSonucYok" class="soluk orta" hidden>Bu isimde bir ders bulamadım. 🤔</p>
+
+      <!-- Bölümler buraya gelecek (dersler-veri.js) -->
+      <div id="bolumListesi"></div>
+
+      <!-- Hepsi bitince -->
+      <section class="kart tebrik" id="tebrik">
+        <div class="buyuk-emoji">🏆</div>
+        <h2>Tebrikler! Bütün dersleri bitirdin!</h2>
+        <p>Artık gerçek bir Python programcısısın. Canlı derste görüşmek üzere! 🎉</p>
+        <a href="canli-ders.html" class="buton buton-kirmizi">🎥 Canlı Derse Git</a>
+      </section>
+
+      <div class="sifirla-alani">
+        <button id="sifirlaButonu" class="buton buton-soluk">🔄 İlerlememi sıfırla</button>
+      </div>
+    </div>
+
+    <!-- ============ TEK BİR DERS ============ -->
+    <div id="dersGorunumu" hidden></div>
+
+  </main>
+
+  <footer class="alt-bilgi">
+    🐍 Python Okulu · Mustafa tarafından ❤️ ile yapıldı
+  </footer>
+
+  <script src="dersler-veri.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

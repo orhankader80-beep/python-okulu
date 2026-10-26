@@ -1,0 +1,206 @@
+rules_version = '2';
+
+// 🔒 Python Okulu - Okul Sistemi güvenlik kuralları (roller: öğrenci, öğretmen, müdür)
+// Firebase Console → Firestore Database → Kurallar (Rules) sekmesine
+// bu dosyanın TAMAMINI yapıştır ve "Yayınla" (Publish) de.
+//
+// Veri yapısı:
+//   kullanicilar/{uid}              → { ad, kullaniciAdi, rol, siniflar: [...], okullar: [...] }
+//                                     rol: "ogrenci" | "ogretmen" | "mudur"
+//   okullar/{okulId}                → { ad, kurucu (müdür), kurucuAd, ogretmenKodu }
+//     ogretmenler/{uid}             → { ad, katilma }   (okula katılan öğretmenler)
+//     uyeler/{uid}                  → { ad, sinifId }   (okulun öğrencileri, okul sohbeti için)
+//     mesajlar/{id}                 → { metin, yazanId, yazanAd, yazanRol, tarih }  (okul sohbeti)
+//   okulkodlari/{KOD}               → { okulId }        (öğretmenlerin okula katılma kodu)
+//   kodlar/{KOD}                    → { sinifId }       (öğrencilerin sınıfa katılma kodu)
+//   siniflar/{sinifId}              → { ad, okulId, okulAd, ogretmenId, ogretmenAd, mudurId, kod }
+//     uyeler/{uid}                  → { ad, yildiz, katilma }  (öğrenciler)
+//     duyurular/{id}                → { metin, tarih }
+//     odevler/{id}                  → { baslik, aciklama, sonTarih }
+//     yoklama/{YIL-AY-GÜN}          → { geldi: [uid...] }
+//     mesajlar/{id}                 → { metin, yazanId, yazanAd, yazanRol, tarih }  (sınıf sohbeti)
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function girisli() { return request.auth != null; }
+    function benim(uid) { return girisli() && request.auth.uid == uid; }
+    function rolum() { return get(/databases/$(database)/documents/kullanicilar/$(request.auth.uid)).data.rol; }
+    function okulVerisi(id) { return get(/databases/$(database)/documents/okullar/$(id)).data; }
+    function sinifVerisi(id) { return get(/databases/$(database)/documents/siniflar/$(id)).data; }
+    function ogretmeni(id) { return girisli() && sinifVerisi(id).ogretmenId == request.auth.uid; }
+    function muduru(id) { return girisli() && sinifVerisi(id).mudurId == request.auth.uid; }
+    function uyesi(id) {
+      return girisli() && exists(/databases/$(database)/documents/siniflar/$(id)/uyeler/$(request.auth.uid));
+    }
+    function okuyabilir(id) { return ogretmeni(id) || uyesi(id) || muduru(id); }
+    function kisaYazi(x, n) { return x is string && x.size() > 0 && x.size() <= n; }
+    function gecerliRol(r) { return r in ['ogrenci', 'ogretmen', 'mudur']; }
+
+    // 🏫 Okulun üyesi: müdür, okula katılmış öğretmen ya da okulun bir sınıfındaki öğrenci
+    function okulUyesi(okulId) {
+      return girisli() && (
+        okulVerisi(okulId).kurucu == request.auth.uid
+        || exists(/databases/$(database)/documents/okullar/$(okulId)/ogretmenler/$(request.auth.uid))
+        || exists(/databases/$(database)/documents/okullar/$(okulId)/uyeler/$(request.auth.uid)));
+    }
+
+    // 🚫 Küfür ve kötü söz engeli (sayfa da engeller, ama asıl kilit burası)
+    function kufurlu(m) {
+      let k = m.lower();
+      return k.matches('.*(orospu|orosbu|siktir|sikerim|sikeyim|sikik|sikis|yarrak|amına|amina|amcık|amcik|pezevenk|gavat|kahpe|yavşak|yavsak|şerefsiz|serefsiz|gerizekal|dangalak|ibne|salak|aptal|ahmak|fuck|bitch|shit|piç).*')
+        || k.matches('(.*[^a-zçğıöşü])?(amk|amq|aq|göt|oç|sik|sg|mk)([^a-zçğıöşü].*)?');
+    }
+    // 📵 Telefon numarası gibi uzun rakamlar yazılmasın
+    function numarali(m) { return m.matches('.*[0-9]{7,}.*'); }
+
+    // 💬 Geçerli bir mesaj: kendi adınla, şimdiki zamanla, temiz ve kısa
+    function mesajGecerli() {
+      let veri = request.resource.data;
+      let profil = get(/databases/$(database)/documents/kullanicilar/$(request.auth.uid)).data;
+      return veri.keys().hasOnly(['metin', 'yazanId', 'yazanAd', 'yazanRol', 'tarih'])
+        && veri.yazanId == request.auth.uid
+        && veri.yazanAd == profil.ad
+        && veri.yazanRol == profil.rol
+        && veri.tarih == request.time
+        && kisaYazi(veri.metin, 300)
+        && !kufurlu(veri.metin)
+        && !numarali(veri.metin);
+    }
+    function profilAlanlari() { return ['ad', 'kullaniciAdi', 'rol', 'siniflar', 'okullar']; }
+
+    // 👤 Herkes sadece kendi bilgisini görür. Rol bir kere seçilir, sonra değişmez.
+    match /kullanicilar/{uid} {
+      allow read: if benim(uid);
+      allow create: if benim(uid)
+        && request.resource.data.keys().hasOnly(profilAlanlari())
+        && kisaYazi(request.resource.data.ad, 20)
+        && kisaYazi(request.resource.data.kullaniciAdi, 15)
+        && gecerliRol(request.resource.data.rol);
+      allow update: if benim(uid)
+        && request.resource.data.keys().hasOnly(profilAlanlari())
+        && request.resource.data.ad == resource.data.ad
+        && request.resource.data.kullaniciAdi == resource.data.kullaniciAdi
+        && gecerliRol(request.resource.data.rol)
+        && request.resource.data.rol == resource.data.get('rol', request.resource.data.rol);
+    }
+
+    // 🏫 Okulu SADECE müdür açar
+    match /okullar/{okulId} {
+      allow read: if girisli();
+      allow create: if girisli()
+        && request.resource.data.kurucu == request.auth.uid
+        && rolum() == 'mudur'
+        && kisaYazi(request.resource.data.ad, 40);
+      allow update: if girisli()
+        && resource.data.kurucu == request.auth.uid
+        && request.resource.data.kurucu == resource.data.kurucu
+        && kisaYazi(request.resource.data.ad, 40);
+      allow delete: if girisli() && resource.data.kurucu == request.auth.uid;
+
+      // 🧑‍🏫 Öğretmen okul koduyla kendini ekler; müdür görür ve çıkarabilir
+      match /ogretmenler/{uid} {
+        allow read: if benim(uid) || (girisli() && okulVerisi(okulId).kurucu == request.auth.uid);
+        allow create: if benim(uid)
+          && rolum() == 'ogretmen'
+          && request.resource.data.keys().hasOnly(['ad', 'katilma'])
+          && kisaYazi(request.resource.data.ad, 20);
+        allow delete: if benim(uid) || (girisli() && okulVerisi(okulId).kurucu == request.auth.uid);
+      }
+
+      // 👦 Öğrenciler okul sohbeti için okula da üye olur (sadece okulun bir sınıfındaysa)
+      match /uyeler/{uid} {
+        allow read: if benim(uid) || (girisli() && okulVerisi(okulId).kurucu == request.auth.uid);
+        allow create: if benim(uid)
+          && request.resource.data.keys().hasOnly(['ad', 'sinifId'])
+          && kisaYazi(request.resource.data.ad, 20)
+          && sinifVerisi(request.resource.data.sinifId).okulId == okulId
+          && exists(/databases/$(database)/documents/siniflar/$(request.resource.data.sinifId)/uyeler/$(uid));
+        allow delete: if benim(uid) || (girisli() && okulVerisi(okulId).kurucu == request.auth.uid);
+      }
+
+      // 💬 Okul sohbeti: sadece okulun üyeleri
+      match /mesajlar/{id} {
+        allow read: if okulUyesi(okulId);
+        allow create: if okulUyesi(okulId) && mesajGecerli();
+        allow delete: if girisli()
+          && (resource.data.yazanId == request.auth.uid || okulVerisi(okulId).kurucu == request.auth.uid);
+      }
+    }
+
+    // 🔑 Öğretmenlerin okula katılma kodları
+    match /okulkodlari/{kod} {
+      allow get: if girisli();
+      allow create: if girisli()
+        && getAfter(/databases/$(database)/documents/okullar/$(request.resource.data.okulId)).data.kurucu == request.auth.uid;
+      allow delete: if girisli() && okulVerisi(resource.data.okulId).kurucu == request.auth.uid;
+    }
+
+    // 🔑 Öğrencilerin sınıfa katılma kodları
+    match /kodlar/{kod} {
+      allow get: if girisli();
+      allow create: if girisli()
+        && getAfter(/databases/$(database)/documents/siniflar/$(request.resource.data.sinifId)).data.ogretmenId == request.auth.uid;
+      allow delete: if girisli() && sinifVerisi(resource.data.sinifId).ogretmenId == request.auth.uid;
+    }
+
+    // 📚 Sınıfı öğretmeni, okulun müdürü ve öğrencileri görür
+    match /siniflar/{sinifId} {
+      allow read: if girisli() && (
+        resource.data.ogretmenId == request.auth.uid
+        || resource.data.mudurId == request.auth.uid
+        || uyesi(sinifId));
+      // Sınıfı okulun müdürü ya da okula katılmış bir öğretmen açar
+      allow create: if girisli()
+        && request.resource.data.ogretmenId == request.auth.uid
+        && request.resource.data.mudurId == okulVerisi(request.resource.data.okulId).kurucu
+        && (request.resource.data.mudurId == request.auth.uid
+            || exists(/databases/$(database)/documents/okullar/$(request.resource.data.okulId)/ogretmenler/$(request.auth.uid)))
+        && kisaYazi(request.resource.data.ad, 40);
+      allow update: if girisli()
+        && resource.data.ogretmenId == request.auth.uid
+        && request.resource.data.ogretmenId == resource.data.ogretmenId
+        && request.resource.data.mudurId == resource.data.mudurId
+        && request.resource.data.okulId == resource.data.okulId;
+      allow delete: if girisli()
+        && (resource.data.ogretmenId == request.auth.uid || resource.data.mudurId == request.auth.uid);
+
+      // 👦 Öğrenci kendini ekler (0 yıldızla). Yıldızı SADECE öğretmen değiştirir.
+      match /uyeler/{uid} {
+        allow read: if okuyabilir(sinifId);
+        allow create: if benim(uid)
+          && exists(/databases/$(database)/documents/siniflar/$(sinifId))
+          && request.resource.data.keys().hasOnly(['ad', 'yildiz', 'katilma'])
+          && request.resource.data.yildiz == 0
+          && kisaYazi(request.resource.data.ad, 20);
+        allow update: if ogretmeni(sinifId)
+          && request.resource.data.ad == resource.data.ad
+          && request.resource.data.yildiz is int
+          && request.resource.data.yildiz >= 0;
+        allow delete: if ogretmeni(sinifId) || muduru(sinifId) || benim(uid);
+      }
+
+      // 📢 Duyuru, 📝 ödev, ✅ yoklama: öğretmen yazar; sınıf ve müdür okur
+      match /duyurular/{id} {
+        allow read: if okuyabilir(sinifId);
+        allow write: if ogretmeni(sinifId);
+      }
+      match /odevler/{id} {
+        allow read: if okuyabilir(sinifId);
+        allow write: if ogretmeni(sinifId);
+      }
+      match /yoklama/{tarih} {
+        allow read: if okuyabilir(sinifId);
+        allow write: if ogretmeni(sinifId);
+      }
+
+      // 💬 Sınıf sohbeti: öğretmen ve öğrenciler yazar, müdür de görür
+      match /mesajlar/{id} {
+        allow read: if okuyabilir(sinifId);
+        allow create: if okuyabilir(sinifId) && mesajGecerli();
+        allow delete: if girisli()
+          && (resource.data.yazanId == request.auth.uid || ogretmeni(sinifId) || muduru(sinifId));
+      }
+    }
+  }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google ve diğer arama motorları bu siteyi listelemesin -->
+  <meta name="robots" content="noindex, nofollow">
+  <title>Canlı Ders · Python Okulu</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 🔒 Giriş kapısı: giriş yapmayan okul.html'e gider (bilgisayardaki dosyadan açınca çalışmaz) -->
+  <script>
+    if (location.protocol !== "file:") {
+      document.documentElement.classList.add("giris-bekleniyor");
+      setTimeout(function () {
+        if (!document.documentElement.classList.contains("giris-bekleniyor")) return;
+        document.documentElement.classList.remove("giris-bekleniyor");
+        document.body.innerHTML = '<p style="text-align:center;padding:48px 16px;font-size:20px">📶 Giriş kontrol edilemedi. İnternetini kontrol edip sayfayı yenile.</p>';
+      }, 12000);
+    }
+  </script>
+  <script type="module" src="giris-kontrol.js"></script>
+</head>
+<body>
+
+  <!-- Üst menü -->
+  <header class="ust-menu">
+    <div class="menu-ic">
+      <a href="index.html" class="logo">🐍 Python Okulu</a>
+      <button class="menu-butonu" aria-label="Menüyü aç" aria-expanded="false">☰</button>
+      <nav class="menu-linkleri">
+        <a href="index.html">🏠 Ana Sayfa</a>
+        <a href="dersler.html">📚 Dersler</a>
+        <a href="sinif.html">🏫 Sınıf</a>
+        <a href="okul.html">🎒 Okulum</a>
+        <a href="canli-ders.html" class="aktif">🎥 Canlı Ders</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="icerik">
+
+    <section class="sayfa-basligi">
+      <h1>🎥 Canlı Ders</h1>
+      <p>Google Meet'te buluşuyoruz, birlikte kod yazıyoruz!</p>
+    </section>
+
+    <!-- Sıradaki ders -->
+    <section class="kart canli-kart">
+      <span class="canli-isaret pasif" id="canliIsaret">📅 SIRADAKİ CANLI DERS</span>
+      <h2 class="siradaki-konu" id="siradakiKonu">Yükleniyor...</h2>
+      <p class="siradaki-zaman" id="siradakiZaman"></p>
+      <div class="geri-sayim" id="geriSayim"></div>
+
+      <div class="canli-butonlar">
+        <!-- Google Meet linki ayarlar.js dosyasından gelir -->
+        <a id="zoomButonu" target="_blank" rel="noopener" class="canli-buton">🎥 Canlı Derse Katıl</a>
+        <button id="takvimeEkle" class="buton buton-beyaz">📅 Takvimime Ekle</button>
+      </div>
+      <p class="link-uyari" id="linkUyari"></p>
+    </section>
+
+    <div class="iki-sutun">
+      <!-- Takvim -->
+      <section class="kart takvim">
+        <div class="takvim-ust">
+          <button class="takvim-ok" id="oncekiAy" aria-label="Önceki ay">◀</button>
+          <h2 id="takvimAyi">Ay</h2>
+          <button class="takvim-ok" id="sonrakiAy" aria-label="Sonraki ay">▶</button>
+        </div>
+        <div class="gun-adlari">
+          <span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span>Cmt</span><span>Paz</span>
+        </div>
+        <div class="takvim-izgarasi" id="takvimIzgarasi"></div>
+        <div class="takvim-aciklama">
+          <span><i class="ders-noktasi"></i> Canlı ders</span>
+          <span><i class="bugun-isareti"></i> Bugün</span>
+        </div>
+        <div class="gun-detayi" id="gunDetayi"></div>
+      </section>
+
+      <!-- Yaklaşan dersler -->
+      <section class="kart">
+        <h2>⏳ Yaklaşan Dersler</h2>
+        <div id="yaklasanDersler"></div>
+      </section>
+    </div>
+
+    <!-- Kurallar -->
+    <section class="kart">
+      <h2>📋 Canlı Ders Kuralları</h2>
+      <ul class="kurallar">
+        <li><span>⏰</span> Derse zamanında gir.</li>
+        <li><span>🔇</span> Mikrofonlar kapalı başlar. Sadece öğretmen izin verince konuş.</li>
+        <li><span>✋</span> Soru sormak için Meet'teki "El kaldır" düğmesine bas ve sıranı bekle.</li>
+        <li><span>💻</span> IDLE'ı açık tut, birlikte kod yazacağız.</li>
+        <li><span>🤝</span> Herkese nazik ol, hata yapmak öğrenmenin parçası!</li>
+        <li><span>🔒</span> Ders linkini sadece okuldaki arkadaşlarınla paylaş.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="alt-bilgi">
+    🐍 Python Okulu · Mustafa tarafından ❤️ ile yapıldı
+  </footer>
+
+  <script src="ayarlar.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

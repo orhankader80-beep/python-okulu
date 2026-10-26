@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Öğretmen Paneli · Python Okulu</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 🔒 Giriş kapısı: giriş yapmayan okul.html'e gider (bilgisayardaki dosyadan açınca çalışmaz) -->
+  <script>
+    if (location.protocol !== "file:") {
+      document.documentElement.classList.add("giris-bekleniyor");
+      setTimeout(function () {
+        if (!document.documentElement.classList.contains("giris-bekleniyor")) return;
+        document.documentElement.classList.remove("giris-bekleniyor");
+        document.body.innerHTML = '<p style="text-align:center;padding:48px 16px;font-size:20px">📶 Giriş kontrol edilemedi. İnternetini kontrol edip sayfayı yenile.</p>';
+      }, 12000);
+    }
+  </script>
+  <script type="module" src="giris-kontrol.js"></script>
+</head>
+<body>
+
+  <header class="ust-menu">
+    <div class="menu-ic">
+      <a href="index.html" class="logo">🐍 Python Okulu</a>
+      <button class="menu-butonu" aria-label="Menüyü aç" aria-expanded="false">☰</button>
+      <nav class="menu-linkleri">
+        <a href="index.html">🏠 Ana Sayfa</a>
+        <a href="sinif.html">🏫 Sınıf</a>
+        <a href="okul.html">🎒 Okulum</a>
+        <a href="ogretmen.html" class="aktif">🧑‍🏫 Öğretmen</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="icerik">
+
+    <section class="sayfa-basligi">
+      <h1>🧑‍🏫 Öğretmen Paneli</h1>
+      <p>Yoklama al, yıldız ver, duyuru ve ödev yaz. Bitince <b>Kaydet</b>'e bas!</p>
+    </section>
+
+    <!-- Şifre ekranı -->
+    <section class="kart giris-kart" id="girisEkrani">
+      <h2>🔐 Öğretmen girişi</h2>
+      <div class="cevap-satiri">
+        <input id="sifreKutusu" class="cevap-kutusu" type="password" placeholder="Şifre" aria-label="Şifre">
+        <button id="girisButonu" class="buton buton-kirmizi">Giriş</button>
+      </div>
+      <p class="sonuc" id="girisSonuc"></p>
+    </section>
+
+    <div id="panel" hidden>
+
+      <!-- Kaydet çubuğu -->
+      <section class="kart kaydet-kart">
+        <div>
+          <h2>💾 Değişiklikler</h2>
+          <p class="soluk" id="degisiklikDurumu">Henüz değişiklik yok.</p>
+        </div>
+        <div class="kaydet-butonlar">
+          <button id="geriAlButonu" class="buton buton-soluk">↩️ Değişiklikleri geri al</button>
+          <button id="kaydetButonu" class="buton buton-kirmizi">💾 Kaydet (ayarlar.js indir)</button>
+        </div>
+      </section>
+
+      <!-- Yoklama -->
+      <section class="kart">
+        <h2>✅ Yoklama</h2>
+        <label class="etiketli">Hangi ders?
+          <select id="dersSecimi" class="secim-kutusu"></select>
+        </label>
+        <div id="yoklamaListesi" class="panel-liste"></div>
+      </section>
+
+      <!-- Yıldızlar ve öğrenciler -->
+      <section class="kart">
+        <h2>⭐ Öğrenciler ve yıldızlar</h2>
+        <div id="ogrenciListesi" class="panel-liste"></div>
+        <div class="cevap-satiri ekle-satiri">
+          <input id="yeniOgrenci" class="cevap-kutusu" placeholder="Yeni öğrencinin ilk adı (soyad yazma!)" aria-label="Yeni öğrenci">
+          <button id="ogrenciEkle" class="buton buton-kirmizi">➕ Ekle</button>
+        </div>
+      </section>
+
+      <div class="iki-sutun">
+        <!-- Duyurular -->
+        <section class="kart">
+          <h2>📢 Duyurular</h2>
+          <textarea id="yeniDuyuru" class="yazi-alani" rows="3" placeholder="Yeni duyuru yaz..."></textarea>
+          <button id="duyuruEkle" class="buton buton-kirmizi tam-genislik">📢 Duyuruyu ekle</button>
+          <div id="duyuruListesiPanel" class="panel-liste"></div>
+        </section>
+
+        <!-- Ödevler -->
+        <section class="kart">
+          <h2>📝 Ödevler</h2>
+          <input id="odevBaslik" class="cevap-kutusu tam" placeholder="Ödevin başlığı" aria-label="Ödev başlığı">
+          <textarea id="odevAciklama" class="yazi-alani" rows="3" placeholder="Ödevde ne yapılacak?"></textarea>
+          <label class="etiketli">Son teslim tarihi
+            <input id="odevTarih" class="cevap-kutusu tam" type="date">
+          </label>
+          <button id="odevEkle" class="buton buton-kirmizi tam-genislik">📝 Ödevi ekle</button>
+          <div id="odevListesiPanel" class="panel-liste"></div>
+        </section>
+      </div>
+
+      <!-- Nasıl yayınlanır -->
+      <section class="kart">
+        <h2>🚀 Kaydettikten sonra</h2>
+        <ol class="adimlar">
+          <li><b>Kaydet</b>'e basınca <code>ayarlar.js</code> dosyası <b>İndirilenler</b> klasörüne iner.</li>
+          <li>O dosyayı <b>Python-okulu</b> klasörüne taşı ve eskisinin <b>yerine koy</b>. (Adı <code>ayarlar (1).js</code> olduysa <code>ayarlar.js</code> yap.)</li>
+          <li><code>Python-okulu</code> klasörünü <b>Netlify</b>'a sürükle-bırak yap. Bitti! 🎉</li>
+        </ol>
+        <p class="soluk">İpucu: Bunları yapmak zor gelirse Claude'a "ayarları yükle" de, o halleder. 😉</p>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="alt-bilgi">
+    🐍 Python Okulu · Öğretmen Paneli
+  </footer>
+
+  <script src="ayarlar.js"></script>
+  <script src="script.js"></script>
+  <script src="ogretmen.js"></script>
+</body>
+</html>
